@@ -1,4 +1,4 @@
-# QML Movie Renderer
+# Qt6 QML Movie Renderer
 
 This application demonstrates how it is possible to render Qt Quick content into a series of images which can later be combined into a Movie file.
 

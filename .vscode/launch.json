@@ -1,0 +1,25 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Qt 6.5.1",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${command:cmake.launchTargetPath}",
+            "args": [],
+            "cwd": "${command:cmake.buildDirectory}",
+            "preLaunchTask": "CMake: build",
+            "internalConsoleOptions": "openOnSessionStart",
+            "environment": [
+                {
+                    "name": "Path",
+                    "value": "${env:Path};C:\\Qt\\6.5.1\\msvc2019_64\\bin\\;C:\\Qt\\6.5.1\\msvc2019_64\\modules\\;C:\\Qt\\6.5.1\\msvc2019_64\\qml\\;${workspaceFolder}\\..\\k3000-office-vcpkg\\installed\\x64-windows\\debug\\bin;${workspaceFolder}\\..\\k3000-office-vcpkg\\installed\\x64-windows\\bin;${workspaceFolder}\\External\\Gstreamer\\1.0\\msvc_x86_64\\bin\\;"
+                }
+            ],
+            "visualizerFile": "${workspaceFolder}/.vscode/qt.natvis.xml"
+        }
+    ]
+}

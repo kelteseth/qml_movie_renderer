@@ -1,0 +1,7 @@
+{
+    "cmake.copyCompileCommands": "${workspaceFolder}/compile_commands.json",
+    "files.associations": {
+        "memory": "cpp"
+    },
+    "editor.formatOnSave": true
+}

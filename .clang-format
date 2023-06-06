@@ -1,0 +1,8 @@
+---
+Language:        Cpp
+BasedOnStyle:  WebKit
+StatementMacros:
+  - Q_UNUSED
+  - QT_REQUIRE_VERSION
+...
+
