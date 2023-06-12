@@ -72,7 +72,7 @@ ApplicationWindow {
             TextField {
                 id: durationSpinBox
                 Layout.fillWidth: true
-                text: "1"
+                text: "3"
             }
         }
 
@@ -84,7 +84,7 @@ ApplicationWindow {
             TextField {
                 id: fpsSpinBox
                 Layout.fillWidth: true
-                text: "1"
+                text: "10"
             }
         }
 
@@ -144,7 +144,7 @@ ApplicationWindow {
         Button {
             text: "Render Movie"
             onClicked: {
-                movieRenderer.renderMovie(qmlFileTextField.text, outputFilenameTextField.text, outputDirectoryTextField.text, imageFormatComboBox.currentValue, Qt.size(100, 100), 1, durationSpinBox.text, fpsSpinBox.text);
+                movieRenderer.renderMovie(qmlFileTextField.text, outputFilenameTextField.text, outputDirectoryTextField.text, imageFormatComboBox.currentValue, Qt.size(widthSpinBox.text, heightSpinBox.text), 1, durationSpinBox.text, fpsSpinBox.text);
             }
         }
 

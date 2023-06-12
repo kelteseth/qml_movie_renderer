@@ -3,7 +3,9 @@
 
 #include <QGuiApplication>
 #include <QObject>
+#include <QOpenGLContext>
 #include <QQmlApplicationEngine>
+#include <QQuickWindow>
 #include <QUrl>
 #include <QtQml/qqmlextensionplugin.h>
 
@@ -11,6 +13,8 @@ Q_IMPORT_QML_PLUGIN(QmlOffscreenRendererPlugin)
 
 int main(int argc, char* argv[])
 {
+
+    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
 
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;

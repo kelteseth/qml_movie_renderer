@@ -42,10 +42,17 @@ MovieRenderer::MovieRenderer(QObject* parent)
     // available.
     format.setDepthBufferSize(16);
     format.setStencilBufferSize(8);
+    format.setVersion(3, 2); // Specify OpenGL version
+    format.setProfile(QSurfaceFormat::CoreProfile); // Specify profile
 
     m_context = new QOpenGLContext;
     m_context->setFormat(format);
-    m_context->create();
+    if (!m_context->create()) {
+        qFatal("Unable to init opengl context");
+    }
+    if (!m_context->isValid()) {
+        qFatal("Not isValid opengl context");
+    }
 
     m_offscreenSurface = new QOffscreenSurface;
     m_offscreenSurface->setFormat(m_context->format());
@@ -53,13 +60,32 @@ MovieRenderer::MovieRenderer(QObject* parent)
 
     m_renderControl = new QQuickRenderControl(this);
     m_quickWindow = new QQuickWindow(m_renderControl);
+    m_quickWindow->setGraphicsApi(QSGRendererInterface::OpenGL);
+    if (!m_context->makeCurrent(m_offscreenSurface)) {
+        qFatal("Unable to make context current on offscreen surface");
+    }
+
+    // Initialize the QQuickRenderControl after setting up the context and surface
+    if (!m_renderControl->initialize()) {
+        qFatal("Unable to initialize QQuickRenderControl");
+    }
+
+    QObject::connect(m_quickWindow, &QQuickWindow::sceneGraphInitialized, this, [this]() {
+        qInfo() << "sceneGraphInitialized";
+    });
+    QObject::connect(m_quickWindow, &QQuickWindow::sceneGraphInvalidated, this, [this]() {
+        qInfo() << "sceneGraphInvalidated";
+    });
+    QObject::connect(m_renderControl, &QQuickRenderControl::renderRequested, this, [this]() {
+        qInfo() << "renderRequested";
+    });
+    QObject::connect(m_renderControl, &QQuickRenderControl::sceneChanged, this, [this]() {
+        qInfo() << "sceneChanged";
+    });
 
     m_qmlEngine = new QQmlEngine;
     if (!m_qmlEngine->incubationController())
         m_qmlEngine->setIncubationController(m_quickWindow->incubationController());
-
-    m_context->makeCurrent(m_offscreenSurface);
-    m_renderControl->initialize();
 }
 
 void MovieRenderer::renderMovie(const QString& qmlFile, const QString& filename,
@@ -110,9 +136,6 @@ void MovieRenderer::start()
     m_status = Running;
     createFbo();
 
-    if (!m_context->makeCurrent(m_offscreenSurface))
-        return;
-
     // Render each frame of movie
     m_frames = m_duration / 1000 * m_fps;
     m_animationDriver = new AnimationDriver(1000 / m_fps);
@@ -135,11 +158,29 @@ void MovieRenderer::cleanup()
 
 void MovieRenderer::createFbo()
 {
+    if (m_size.isNull() || m_dpr <= 0) {
+        qFatal("Invalid size or device pixel ratio");
+    }
+    QOpenGLContext* ctx = QOpenGLContext::currentContext();
+
+    if (!ctx) {
+        qFatal("No context");
+        return;
+    }
+
     m_fbo = new QOpenGLFramebufferObject(
         m_size * m_dpr, QOpenGLFramebufferObject::CombinedDepthStencil);
 
+    if (!m_fbo->isValid()) {
+        qFatal("invalid m_fbo");
+    }
+
     QQuickRenderTarget renderTarget = QQuickRenderTarget::fromOpenGLTexture(
         m_fbo->texture(), m_fbo->size());
+
+    if (renderTarget.isNull()) {
+        qFatal("invalid renderTarget");
+    }
 
     m_quickWindow->setRenderTarget(renderTarget);
 }
@@ -193,18 +234,17 @@ bool MovieRenderer::loadQML(const QString& qmlFile, const QSize& size)
 void static saveImage(const QImage& image, const QString& outputFile)
 {
     const auto a = QUrl::fromUserInput(outputFile).toLocalFile();
-    image.save(a);
+    qInfo() << "Save:" << image.save(a);
 }
 
 void MovieRenderer::renderNext()
 {
-    // Polish, synchronize and render the next frame (into our fbo).
+    //  Polish, synchronize and render the next frame (into our fbo).
     m_renderControl->polishItems();
     m_renderControl->beginFrame();
     m_renderControl->sync();
     m_renderControl->render();
     m_renderControl->endFrame();
-
     m_context->functions()->glFlush();
 
     m_currentFrame++;
