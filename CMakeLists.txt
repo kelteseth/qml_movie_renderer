@@ -21,13 +21,17 @@ find_package(
 
 set(SOURCES
     # cmake-format: sort
-    movierenderer.cpp
-    animationdriver.cpp)
+    MovieRenderer.cpp
+    animationdriver.cpp
+    RenderJobOpenGlThreaded.cpp
+    RenderJobOpenGl.cpp)
 
 set(HEADER
     # cmake-format: sort    
-    movierenderer.h 
-    animationdriver.h )
+    MovieRenderer.h 
+    animationdriver.h
+    RenderJobOpenGlThreaded.h
+    RenderJobOpenGl.h)
 
 set(QML
     # cmake-format: sort

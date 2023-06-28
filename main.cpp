@@ -13,9 +13,6 @@ Q_IMPORT_QML_PLUGIN(QmlOffscreenRendererPlugin)
 
 int main(int argc, char* argv[])
 {
-
-    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
-
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
     // The first subfolder is the libraryName followed by the regular
